@@ -2,7 +2,14 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
-  form(action="/createhook" method="POST")
-    input(type="submit" value="Create Webhook")
+
+  button(type='button', id='send_by_button') Create Webhook   
+
   p !{json}
+  
+    //loading jQuery; it can be done from an online source as well
+    script(src='./javascripts/jquery-2.2.4.min.js')
+
+    //loading JS for page
+    script(src='./javascripts/pagefunctions.js')
+  

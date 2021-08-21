@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
   webHooks.getListeners();
 
   var db = require('../data/webHooksDB.json');
-  res.render('index', { title: 'Express', json: JSON.stringify(db)});
+  res.render('index', { title: 'Webhook Demo', json: JSON.stringify(db)});
 });
 
 /* Hook Created method */
