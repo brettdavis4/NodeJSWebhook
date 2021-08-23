@@ -1,6 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+var app = express();
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Initialize WebHooks module.
 //var WebHooks = require('node-webhooks');
 var WebHooks = require('./webhook')
@@ -21,6 +28,15 @@ emitter.on('*.failure', function (shortname, statusCode, body) {
     console.error('Error on trigger webHook' + shortname + 'with status code', statusCode, 'and body', body)
 })
 
+
+const server = require('http').createServer(express);
+const io = require('socket.io')(server);
+io.on('connection', () => { /* … */ });
+server.listen(3001);
+
+//var server = app.listen(3000)
+//var io = require('socket.io').listen(server);
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   webHooks.getListeners();
@@ -40,7 +56,7 @@ router.post('/createhook', function(req, res, next) {
   }).catch(function(err){
     console.log(err)
   })
-  webHooks.trigger(guid, {data: guid}, {header: 'header'}) // payload will be sent as POST request with JSON body (Content-Type: application/json) and custom header
+ // webHooks.trigger(guid, {data: guid}, {header: 'header'}) // payload will be sent as POST request with JSON body (Content-Type: application/json) and custom header
  
 });
 
@@ -59,9 +75,15 @@ router.get('/api/webhook/get', function(req, res, next) {
 /* Get Specific Webhook */
 router.get('/api/webhook/get/:shortname', function(req, res) {
   res.json({ shortname: req.params.shortname });
+  //webHooks.trigger(req.params.shortname, {data: req.params.shortname})
+});
+
+router.post('/api/webhook/get/:shortname', function(req, res) {
+  //res.json({ shortname: req.params.shortname });
   //WebHooks.trigger(req.params.shortname)
   webHooks.trigger(req.params.shortname, {data: req.params.shortname})
 });
+
 
 /* Delete Specific Webhook */
 //POST /api/webhook/delete/[WebHookShortname]
